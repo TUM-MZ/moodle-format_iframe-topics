@@ -58,7 +58,7 @@ class format_iframetopics extends format_base {
             return format_string($section->name, true,
                     array('context' => context_course::instance($this->courseid)));
         } else if ($section->section == 0) {
-            return get_string('section0name', 'format_topics');
+            return get_string('section0name', 'format_iframetopics');
         } else {
             return get_string('topic').' '.$section->section;
         }
