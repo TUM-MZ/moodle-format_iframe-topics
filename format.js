@@ -85,3 +85,36 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
         }
     }
 }
+
+
+/**
+ * load iframe on click
+ *
+ * @param {YUI} Y YUI3 instance
+ * @return void
+ */
+
+M.course.format.iframetopic = function(Y){
+    var links = Y.all('.iframelink');
+    //links.each(function(link){
+    //    link.ancestor().insert("<iframe style='display:none'></iframe>", 'after');
+    //});
+
+    links.on('click', function(e){
+        e.preventDefault();
+        var link = e.currentTarget;
+        if(!(link.hasClass('clicked') || link.hasClass('dimmed_text'))){
+            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ "></iframe>", 'after');
+            var iframe = parent.next('iframe');
+
+
+            //stop loading multiple iframe by adding clicked class to link
+            link.addClass('clicked');
+        }
+        else if(link.hasClass('clicked')){
+            link.ancestor().next('iframe').remove();
+            link.removeClass('clicked');
+        }
+
+    });
+}

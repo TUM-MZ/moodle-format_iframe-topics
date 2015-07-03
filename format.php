@@ -58,3 +58,4 @@ if (!empty($displaysection)) {
 
 // Include course format js module
 $PAGE->requires->js('/course/format/iframetopics/format.js');
+$PAGE->requires->js_init_call('M.course.format.iframetopic');
