@@ -96,17 +96,13 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
 
 M.course.format.iframetopic = function(Y){
     var links = Y.all('.iframelink');
-    //links.each(function(link){
-    //    link.ancestor().insert("<iframe style='display:none'></iframe>", 'after');
-    //});
 
     links.on('click', function(e){
         e.preventDefault();
         var link = e.currentTarget;
         if(!(link.hasClass('clicked') || link.hasClass('dimmed_text'))){
-            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ "></iframe>", 'after');
+            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)'></iframe>", 'after');
             var iframe = parent.next('iframe');
-
 
             //stop loading multiple iframe by adding clicked class to link
             link.addClass('clicked');
@@ -115,6 +111,19 @@ M.course.format.iframetopic = function(Y){
             link.ancestor().next('iframe').remove();
             link.removeClass('clicked');
         }
-
     });
+}
+M.course.format.iframetopic.afterLoadIframe = function(iframe){
+    var doc = iframe.contentWindow.document;
+    var ydoc = Y.one(doc);
+
+    var output = ydoc.one('#region-main .region-content');  //only div to keep. the content.
+    var elem_type = ['link',  'script', 'style'];       //types of element to keep
+    for(var e in elem_type){
+        ydoc.all(elem_type[e]).each(function(node){
+           output.prepend(node);
+        });
+
+    }
+    ydoc.setHTML(output);
 }
