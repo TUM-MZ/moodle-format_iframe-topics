@@ -101,7 +101,7 @@ M.course.format.iframetopic = function(Y){
         e.preventDefault();
         var link = e.currentTarget;
         if(!(link.hasClass('clicked') || link.hasClass('dimmed_text'))){
-            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)'></iframe>", 'after');
+            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)' style='display:none'></iframe>", 'after');
             var iframe = parent.next('iframe');
 
             //stop loading multiple iframe by adding clicked class to link
@@ -126,4 +126,5 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
 
     }
     ydoc.setHTML(output);
+    iframe.style.display = 'block';
 }
