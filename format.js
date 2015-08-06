@@ -117,9 +117,22 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
     var doc = iframe.contentWindow.document;
     var ydoc = Y.one(doc);
 
-    var output = ydoc.one('#region-main .region-content');  //only div to keep. the content.
+    //only div to keep. the content.
+    var output = ydoc.one('#region-main .region-content');
     output.setStyle('margin', '0px');
     output.setStyle('padding', '0px');
+
+    //cross domain urls to open in new tab
+    output.all("a").each(function(link){
+        var href = link.getAttribute("href");
+        if(((href.startsWith('http') || href.startsWith('https') || href.startsWith('ftp')) &&
+            !href.startsWith(window.location.origin)) ||
+                href.indexOf("/mod/url") != -1){
+            link.setAttribute("target", "_blank");
+        }
+    });
+
+    // things to copy outside of the initial div
     var elem_type = ['link',  'script', 'style', 'param'];       //types of element to keep
     for(var e in elem_type){
         ydoc.all(elem_type[e]).each(function(node){
@@ -127,6 +140,8 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
         });
 
     }
+
+    //copying ancestors but keeping their content blank
     while(output.ancestor() != null){
         var temp = output.ancestor();
         temp.setStyle('margin', '0px');
@@ -138,6 +153,8 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
         });
         output = temp;
     }
+
+    //set edited iframe content to display
     ydoc.setHTML(output);
     iframe.style.display = 'block';
 }
