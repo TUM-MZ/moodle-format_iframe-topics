@@ -97,6 +97,7 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
 M.course.format.iframetopic = function(Y){
     var links = Y.all('.iframelink');
 
+
     links.on('click', function(e){
         e.preventDefault();
         var link = e.currentTarget;
@@ -112,14 +113,20 @@ M.course.format.iframetopic = function(Y){
             link.removeClass('clicked');
         }
     });
+
+    var default_li = Y.one('.current_li');
+    if(default_li){
+        var link = default_li.one('a.iframelink').getDOMNode();
+        link.click();
+        window.scroll(0, M.course.format.iframetopic.findPos(link));
+    }
 }
 M.course.format.iframetopic.afterLoadIframe = function(iframe){
-    var doc = iframe.contentWindow.document;
-    var ydoc = Y.one(doc);
+    var ydoc = Y.one(iframe.contentWindow.document);
 
     //only div to keep. the content.
     var output = ydoc.one('#region-main .region-content');
-    output.setStyle('margin', '0px');
+    output.setStyle('margin', '1em');
     output.setStyle('padding', '0px');
 
     //cross domain urls to open in new tab
@@ -157,4 +164,14 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
     //set edited iframe content to display
     ydoc.setHTML(output);
     iframe.style.display = 'block';
+}
+
+M.course.format.iframetopic.findPos = function(obj) {
+    var curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return [curtop];
+    }
 }

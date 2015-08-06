@@ -134,7 +134,7 @@ class format_iframetopics_renderer extends format_section_renderer_base {
             $classattr .= ' hidden';
             $linkclasses .= ' dimmed_text';
         } else if (course_get_format($course)->is_section_current($section)) {
-            $classattr .= ' current';
+            $classattr .= ' current_li';
         }
 
         $title = get_section_name($course, $section);
