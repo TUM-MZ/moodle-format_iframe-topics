@@ -118,12 +118,25 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
     var ydoc = Y.one(doc);
 
     var output = ydoc.one('#region-main .region-content');  //only div to keep. the content.
-    var elem_type = ['link',  'script', 'style'];       //types of element to keep
+    output.setStyle('margin', '0px');
+    output.setStyle('padding', '0px');
+    var elem_type = ['link',  'script', 'style', 'param'];       //types of element to keep
     for(var e in elem_type){
         ydoc.all(elem_type[e]).each(function(node){
            output.prepend(node);
         });
 
+    }
+    while(output.ancestor() != null){
+        var temp = output.ancestor();
+        temp.setStyle('margin', '0px');
+        temp.setStyle('padding', '0px');
+        temp.get('children').each(function(child){
+            if (child != output){
+                child.remove();
+            }
+        });
+        output = temp;
     }
     ydoc.setHTML(output);
     iframe.style.display = 'block';
