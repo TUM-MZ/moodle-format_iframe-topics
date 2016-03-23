@@ -7,3 +7,11 @@
 .course-content ul.topics li.section .right {width:40px;text-align:center;padding: 6px 0;}
 .course-content ul.topics li.section .right img.icon { padding: 0 0 4px 0;}
 .course-content ul.topics li.section .left .section-handle img.icon { padding:0; vertical-align: baseline; }
+.course-content ul.topics li.section .loadingspan {
+  background-image: url('[[pix:i/loading_small]]');
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-left: 4px;
+}

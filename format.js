@@ -102,11 +102,12 @@ M.course.format.iframetopic = function(Y){
         e.preventDefault();
         var link = e.currentTarget;
         if(!(link.hasClass('clicked') || link.hasClass('dimmed_text'))){
-            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)' style='display:none'></iframe>", 'after');
+            var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " max-height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)' style='display:none'></iframe>", 'after');
             var iframe = parent.next('iframe');
 
             //stop loading multiple iframe by adding clicked class to link
             link.addClass('clicked');
+            link.append('<span class="loadingspan"></span>')
         }
         else if(link.hasClass('clicked')){
             link.ancestor().next('iframe').remove();
@@ -125,7 +126,7 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
     var ydoc = Y.one(iframe.contentWindow.document);
 
     //only div to keep. the content.
-    var output = ydoc.one('#region-main .region-content');
+    var output = ydoc.one('#region-main .region-content .single-section .topics');
     output.setStyle('margin', '1em');
     output.setStyle('padding', '0px');
 
@@ -160,10 +161,14 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
         });
         output = temp;
     }
+    ydoc.one("#page").setStyle('min-height', 0);
 
     //set edited iframe content to display
     ydoc.setHTML(output);
     iframe.style.display = 'block';
+
+    // remove loading indicator
+    Y.all('.loadingspan').remove();
 }
 
 M.course.format.iframetopic.findPos = function(obj) {
