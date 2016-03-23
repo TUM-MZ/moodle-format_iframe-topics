@@ -1,6 +1,7 @@
 .course-content ul.topics {margin:0;}
 .course-content ul.topics li.section {list-style: none;margin:0 0 5px 0;padding:0;}
 .course-content ul.topics li.section .content {margin:0 40px;}
+.course-content ul.topics li.section .section-title { padding-top: 2px; padding-bottom: 2px; }
 .course-content ul.topics li.section .left {float:left;}
 .course-content ul.topics li.section .right {float:right;}
 .course-content ul.topics li.section .left,
@@ -14,4 +15,8 @@
   display: inline-block;
   vertical-align: text-bottom;
   margin-left: 4px;
+}
+.course-content ul.topics li.section .section-summary-activities {
+  display: inline-block;
+  float: right;
 }
