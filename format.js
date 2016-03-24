@@ -105,9 +105,14 @@ M.course.format.iframetopic = function(Y){
             var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " max-height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)' style='display:none'></iframe>", 'after');
             var iframe = parent.next('iframe');
 
+            // bind reloading function to iframe object for later use
+            iframe.getDOMNode()._triggerReloading = M.course.format.iframetopic.triggerReloading.bind(null, link, iframe);
+            // set it to handle unload events (i.e. a link is clicked in iframe)
+            iframe.getDOMNode().contentWindow.onbeforeunload = iframe.getDOMNode()._triggerReloading;
+            // and invoke it now, since we are loading an iframe
+            iframe.getDOMNode()._triggerReloading();
             //stop loading multiple iframe by adding clicked class to link
             link.addClass('clicked');
-            link.append('<span class="loadingspan"></span>')
         }
         else if(link.hasClass('clicked')){
             link.ancestor().next('iframe').remove();
@@ -122,11 +127,26 @@ M.course.format.iframetopic = function(Y){
         window.scroll(0, M.course.format.iframetopic.findPos(link));
     }
 }
-M.course.format.iframetopic.afterLoadIframe = function(iframe){
+
+M.course.format.iframetopic.triggerReloading = function(link, iframe) {
+  link.append('<span class="loadingspan"></span>')
+  iframe.setStyle('height', 0);
+}
+
+M.course.format.iframetopic.afterLoadIframe = function(iframe) {
     var ydoc = Y.one(iframe.contentWindow.document);
+    // rebind reloading routine since content window has changed
+    iframe.contentWindow.onbeforeunload = iframe._triggerReloading;
 
     //only div to keep. the content.
-    var output = ydoc.one('#region-main .region-content .single-section .topics');
+    var output = ydoc.one('#region-main .region-content .single-section');
+    if (!!output) {
+      // a section view
+      output = output.one('.topics');
+    } else {
+      // a course activity
+      output = ydoc.one('#region-main .region-content');
+    }
     output.setStyle('margin', '1em');
     output.setStyle('padding', '0px');
 
@@ -146,7 +166,6 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
         ydoc.all(elem_type[e]).each(function(node){
            output.prepend(node);
         });
-
     }
 
     //copying ancestors but keeping their content blank
@@ -163,9 +182,15 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe){
     }
     ydoc.one("#page").setStyle('min-height', 0);
 
+
+    iframe.style.display = 'block';
+
+    // set iframe height to the new doc height
+    var content_height = parseInt(output.getComputedStyle('height').replace('px', '')) + 10;
+    iframe.style.height = content_height + 'px';
+
     //set edited iframe content to display
     ydoc.setHTML(output);
-    iframe.style.display = 'block';
 
     // remove loading indicator
     Y.all('.loadingspan').remove();
