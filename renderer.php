@@ -172,6 +172,10 @@ class format_iframetopics_renderer extends format_section_renderer_base {
         if ($section->uservisible) {
             $title = html_writer::tag('a', $title,
                 array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+            $title .= html_writer::start_tag('div', array('class' => 'iframe_nav'));
+            $title .= html_writer::tag('a', '🡨', array('href' => '#', 'class' => 'go_back'));
+            $title .= html_writer::tag('a', '🡪', array('href' => '#', 'class' => 'go_forward'));
+            $title .= html_writer::end_tag('div');
             $title .= $this->section_activity_summary($section, $course, null);
             $o .= $this->output->heading($title, 3, 'section-title');
         }

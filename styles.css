@@ -1,6 +1,7 @@
 .course-content ul.topics {margin:0;}
 .course-content ul.topics li.section {list-style: none;margin:0 0 5px 0;padding:0;}
 .course-content ul.topics li.section .content {margin:0 40px;}
+.course-content ul.topics li.section.current { background-color: rgba(255, 255, 255, 0); }
 .course-content ul.topics li.section .section-title { padding-top: 2px; padding-bottom: 2px; }
 .course-content ul.topics li.section .left {float:left;}
 .course-content ul.topics li.section .right {float:right;}
@@ -15,6 +16,23 @@
   display: inline-block;
   vertical-align: text-bottom;
   margin-left: 4px;
+}
+.course-content ul.topics li.section .iframe_nav {
+  display: none;
+  margin-left: 4px;
+}
+.course-content ul.topics li.section .iframe_nav a {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.course-content ul.topics li.section .iframe_nav a.enabled {
+  cursor: pointer;
+  pointer-events: all;
+  opacity: 1;
+}
+.course-content ul.topics li.section .iframelink.clicked ~ .iframe_nav {
+  display: inline-block;
 }
 .course-content ul.topics li.section .section-summary-activities {
   display: inline-block;

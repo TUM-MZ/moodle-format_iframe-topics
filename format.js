@@ -104,6 +104,10 @@ M.course.format.iframetopic = function(Y){
         if(!(link.hasClass('clicked') || link.hasClass('dimmed_text'))){
             var parent = link.ancestor().insert("<iframe src = " + link.getAttribute('href')+ " max-height='500px' onload='M.course.format.iframetopic.afterLoadIframe(this)' style='display:none'></iframe>", 'after');
             var iframe = parent.next('iframe');
+            // initialize history counts
+            iframe.getDOMNode()._back_length = -1; // to compensate for the first load
+            iframe.getDOMNode()._forward_length = 0;
+            M.course.format.iframetopic.renderNavForIFrame(iframe);
 
             // bind reloading function to iframe object for later use
             iframe.getDOMNode()._triggerReloading = M.course.format.iframetopic.triggerReloading.bind(null, link, iframe);
@@ -120,6 +124,23 @@ M.course.format.iframetopic = function(Y){
         }
     });
 
+    Y.all('.iframe_nav .go_back, .iframe_nav .go_forward').on('click', function(e) {
+      e.preventDefault();
+      var iframe = e.currentTarget.ancestor().ancestor().ancestor().one('iframe');
+      var history = iframe.getDOMNode().contentWindow.history;
+      if (e.currentTarget.hasClass('go_back')) {
+        iframe.getDOMNode()._forward_length += 1;
+        iframe.getDOMNode()._back_length -= 1;
+        iframe.getDOMNode()._triggered_by_history = true;
+        history.back();
+      } else if (e.currentTarget.hasClass('go_forward')) {
+        iframe.getDOMNode()._forward_length -= 1;
+        iframe.getDOMNode()._back_length += 1;
+        iframe.getDOMNode()._triggered_by_history = true;
+        history.forward();
+      }
+    });
+
     var default_li = Y.one('.current_li');
     if(default_li){
         var link = default_li.one('a.iframelink').getDOMNode();
@@ -128,8 +149,25 @@ M.course.format.iframetopic = function(Y){
     }
 }
 
+M.course.format.iframetopic.renderNavForIFrame = function(iframe) {
+  var back = iframe.ancestor().one('.go_back');
+  var forward = iframe.ancestor().one('.go_forward');
+  var back_length = iframe.getDOMNode()._back_length;
+  var forward_length = iframe.getDOMNode()._forward_length;
+  if (back_length > 0) {
+    back.addClass('enabled');
+  } else {
+    back.removeClass('enabled');
+  }
+  if (forward_length > 0) {
+    forward.addClass('enabled');
+  } else {
+    forward.removeClass('enabled');
+  }
+}
+
 M.course.format.iframetopic.triggerReloading = function(link, iframe) {
-  link.append('<span class="loadingspan"></span>')
+  link.ancestor().one('.iframe_nav').append('<span class="loadingspan"></span>')
   iframe.setStyle('height', 0);
 }
 
@@ -137,6 +175,18 @@ M.course.format.iframetopic.afterLoadIframe = function(iframe) {
     var ydoc = Y.one(iframe.contentWindow.document);
     // rebind reloading routine since content window has changed
     iframe.contentWindow.onbeforeunload = iframe._triggerReloading;
+
+
+    // if the page change wasn't a history action
+    if (!iframe._triggered_by_history) {
+      // reset history lengths and rerender controls
+      iframe._back_length += 1;
+      iframe._forward_length = 0;
+    } else {
+      // reset the flag
+      iframe._triggered_by_history = false;
+    }
+    M.course.format.iframetopic.renderNavForIFrame(Y.one(iframe));
 
     //only div to keep. the content.
     var output = ydoc.one('#region-main .region-content .single-section');
